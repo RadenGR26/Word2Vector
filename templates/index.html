@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Word2Vec Viewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">🔎 Word2Vec Interface</h2>
+                <h4 class="card-title text-center mb-4">Created By Raden Gumilar Riyansyah</h4>
+
+                <form method="POST" class="mb-4">
+                    <div class="mb-3">
+                        <label for="word" class="form-label">Pilih atau ketik kata:</label>
+                        <input type="text" name="word" list="vocab" class="form-control" placeholder="Contoh: data" value="{{ selected_word }}">
+                        <datalist id="vocab">
+                            {% for word in vocab %}
+                                <option value="{{ word }}">
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">🔍 Cari</button>
+                </form>
+
+                {% if vector %}
+                    <div class="mb-4">
+                        <h5 class="text-success">🧠 Vektor dari '{{ selected_word }}':</h5>
+                        <pre class="bg-light p-3 border rounded" style="max-height: 200px; overflow-y: auto;">{{ vector }}</pre>
+                    </div>
+                {% endif %}
+
+                {% if similar_words %}
+                    <div class="mb-4">
+                        <h5 class="text-info">📚 Kata yang mirip dengan '{{ selected_word }}':</h5>
+                        <ul class="list-group">
+                            {% for word, score in similar_words %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ word }}
+                                    <span class="badge bg-secondary">{{ "%.4f"|format(score) }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% elif selected_word %}
+                    <div class="alert alert-warning">Kata '{{ selected_word }}' tidak ditemukan dalam model.</div>
+                {% endif %}
+
+                <hr class="my-4">
+                <div class="text-center">
+                    <h4 class="mb-3">Visualisasi Word2Vec (PCA)</h4>
+                    <img src="{{ url_for('static', filename='word2vec_plot.png') }}" alt="Word2Vec PCA Plot" class="img-fluid rounded border shadow">
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
